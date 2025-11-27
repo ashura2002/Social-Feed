@@ -6,28 +6,14 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
-import { CreateUserDTO } from './dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
-
-  async create(createUserDTO: CreateUserDTO): Promise<User> {
-    const { username, email } = createUserDTO;
-    const existingEmail = await this.findByEmail(email);
-    const existingUsername = await this.findByUsername(username);
-
-    if (
-      username === existingUsername?.username ||
-      email === existingEmail?.email
-    )
-      throw new ConflictException('Username or Email was already taken!');
-
-    const user = this.userRepository.create(createUserDTO);
-    return await this.userRepository.save(user);
-  }
 
   async findById(userId: number): Promise<User> {
     const user = await this.userRepository.findOne({
@@ -42,14 +28,24 @@ export class UsersService {
     return user;
   }
 
-  private async findByUsername(username: string): Promise<User | null> {
+  async update(userId: number, updateDTO: UpdateUserDTO): Promise<User> {
+    const { password } = updateDTO;
+    const user = await this.findById(userId);
+    if (password) {
+      updateDTO.password = bcrypt.hashSync(password, 10);
+    }
+    Object.assign(user, updateDTO);
+    return await this.userRepository.save(user);
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { username: username },
     });
     return user;
   }
 
-  private async findByEmail(email: string): Promise<User | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const user = await this.userRepository.findOne({ where: { email: email } });
     return user;
   }

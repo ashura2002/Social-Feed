@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfigFactory } from './config/db.config';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
