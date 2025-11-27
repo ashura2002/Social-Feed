@@ -37,6 +37,11 @@ export class UsersService {
     return user;
   }
 
+  async findAll(): Promise<User[]> {
+    const user = await this.userRepository.find();
+    return user;
+  }
+
   private async findByUsername(username: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { username: username },
@@ -49,5 +54,3 @@ export class UsersService {
     return user;
   }
 }
-
-// ipacheck sa chatgpt -> findByUsername and findByEmail
