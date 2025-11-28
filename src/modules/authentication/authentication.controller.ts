@@ -8,8 +8,10 @@ import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/common/Enums/roles.enums';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('authentication')
+@ApiBearerAuth('access-token')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
