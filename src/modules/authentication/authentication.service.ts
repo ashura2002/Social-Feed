@@ -54,5 +54,25 @@ export class AuthenticationService {
     const accessToken = await this.jwtService.signAsync(payload);
     return accessToken;
   }
+
+  async googleLogin(googleUser: any) {
+    const { email } = googleUser;
+    // check if user is existing
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) {
+      throw new BadRequestException(
+        'Your email account is not registered. Contact admin.',
+      );
+    }
+    // if exist create token
+    const payload: JwtResponsePayload = {
+      userId: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    };
+    const accessToken = await this.jwtService.signAsync(payload);
+    return accessToken;
+  }
 }
-// implement Oauth2 with google provider
