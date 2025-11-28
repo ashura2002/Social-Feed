@@ -9,7 +9,8 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
-import { RolesStatus } from 'src/common/Enums/user-status.enum';
+import { UserStatus } from 'src/common/Enums/user-status.enum';
+
 
 @Entity()
 export class User {
@@ -29,8 +30,8 @@ export class User {
   @Column({ type: 'enum', enum: Roles, default: Roles.User })
   role: Roles;
 
-  @Column({ type: 'enum', enum: RolesStatus, default: RolesStatus.InActive })
-  status: RolesStatus;
+  @Column({ type: 'enum', enum: UserStatus, default: UserStatus.InActive })
+  status: UserStatus;
 
   @CreateDateColumn()
   createdAt: Date;

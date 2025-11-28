@@ -49,4 +49,12 @@ export class UsersService {
     const user = await this.userRepository.findOne({ where: { email: email } });
     return user;
   }
+
+  async getCurrentUser(userId: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+    return user!;
+  }
 }
+// added logout functionality to make the user inactive

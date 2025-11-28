@@ -20,6 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
       useFactory: typeOrmConfigFactory,
       inject: [ConfigService],
     }),
+    JwtModule,
     UsersModule,
     PostsModule,
     AuthenticationModule,

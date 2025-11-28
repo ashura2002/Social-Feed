@@ -1,4 +1,4 @@
-export enum RolesStatus {
+export enum UserStatus {
   Active = 'Active',
   InActive = 'Inactive',
 }

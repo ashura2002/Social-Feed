@@ -5,21 +5,38 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './entity/user.entity';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
+import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
+import { Role } from 'src/common/decorators/roles.decorator';
+import { Roles } from 'src/common/Enums/roles.enums';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiBearerAuth('access-token')
+@UseGuards(JWTAuthGuard, RoleAuthGuard)
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get()
+  @Role(Roles.Admin)
   async findAllUsers(): Promise<User[]> {
     return await this.userService.findAll();
   }
 
+  @Get('current')
+  async getCurrentUser(@Req() req): Promise<User> {
+    const { userId } = req.user;
+    return await this.userService.getCurrentUser(userId);
+  }
+
   @Get(':userId/details')
+  @Role(Roles.Admin)
   async findUserById(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<User> {
@@ -27,6 +44,7 @@ export class UsersController {
   }
 
   @Patch(':userId')
+  @Role(Roles.Admin)
   async updateUser(
     @Param('userId', ParseIntPipe) userId: number,
     @Body() updateDTO: UpdateUserDTO,

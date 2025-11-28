@@ -12,6 +12,7 @@ import { LoginDTO } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtResponsePayload } from './types/JwtResponsePayload.types';
 import { JwtService } from '@nestjs/jwt';
+import { UserStatus } from 'src/common/Enums/user-status.enum';
 
 @Injectable()
 export class AuthenticationService {
@@ -36,7 +37,7 @@ export class AuthenticationService {
     return await this.userRepository.save(user);
   }
 
-  async login(loginDTO: LoginDTO): Promise<any> {
+  async login(loginDTO: LoginDTO): Promise<string> {
     const { username, password } = loginDTO;
     const user = await this.userService.findByUsername(username);
     if (username !== user?.username)
@@ -44,6 +45,10 @@ export class AuthenticationService {
 
     const isHashPassword = await bcrypt.compare(password, user.password);
     if (!isHashPassword) throw new BadRequestException('Invalid Credentials');
+
+    // turn to active if the user is successfully login
+    user.status = UserStatus.Active;
+    await this.userRepository.save(user);
 
     const payload: JwtResponsePayload = {
       userId: user.id,
