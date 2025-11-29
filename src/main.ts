@@ -40,7 +40,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, documentFactory);
+  SwaggerModule.setup('api', app, documentFactory);
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   // app.use(new LoggerMiddleware().use);
   await app.listen(port);

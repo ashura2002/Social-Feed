@@ -57,4 +57,3 @@ export class UsersService {
     return user!;
   }
 }
-// added logout functionality to make the user inactive

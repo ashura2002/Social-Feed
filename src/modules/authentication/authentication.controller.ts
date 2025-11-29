@@ -9,6 +9,7 @@ import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/common/Enums/roles.enums';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { User } from '../users/entity/user.entity';
 
 @Controller('authentication')
 @ApiBearerAuth('access-token')
@@ -26,6 +27,17 @@ export class AuthenticationController {
   async login(@Body() loginDTO: LoginDTO) {
     const accessToken = await this.authenticationService.login(loginDTO);
     return { message: 'Login Successfully', accessToken };
+  }
+
+  @UseGuards(JWTAuthGuard, RoleAuthGuard)
+  @Post('logout')
+  async logout(@Req() req): Promise<{ message: string; user: User }> {
+    const { userId } = req.user;
+    const user = await this.authenticationService.logout(userId);
+    return {
+      message: 'Logout Successfully',
+      user: user,
+    };
   }
 
   @Get('google')
