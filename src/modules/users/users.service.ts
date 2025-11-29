@@ -56,4 +56,9 @@ export class UsersService {
     });
     return user!;
   }
+
+  async removeUser(userId: number): Promise<void> {
+    const user = await this.findById(userId);
+    await this.userRepository.remove(user);
+  }
 }

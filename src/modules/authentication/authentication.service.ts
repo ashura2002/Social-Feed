@@ -60,10 +60,10 @@ export class AuthenticationService {
     return accessToken;
   }
 
-  async logout(userId: number): Promise<User> {
+  async logout(userId: number): Promise<void> {
     const user = await this.userService.findById(userId);
     user.status = UserStatus.InActive;
-    return await this.userRepository.save(user);
+    await this.userRepository.save(user);
   }
 
   async googleLogin(googleUser: any) {
