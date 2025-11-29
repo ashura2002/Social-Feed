@@ -4,13 +4,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { UserStatus } from 'src/common/Enums/user-status.enum';
-
+import { Profile } from 'src/modules/profile/entity/profile.entity';
 
 @Entity()
 export class User {
@@ -43,4 +45,8 @@ export class User {
   hashPassword() {
     this.password = bcrypt.hashSync(this.password, 10);
   }
+
+  @OneToOne(() => Profile, (profile) => profile.user, { nullable: true })
+  @JoinColumn()
+  profile: Profile;
 }

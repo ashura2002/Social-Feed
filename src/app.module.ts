@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfigFactory } from './config/db.config';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ProfileModule } from './modules/profile/profile.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { JwtModule } from '@nestjs/jwt';
     UsersModule,
     PostsModule,
     AuthenticationModule,
+    ProfileModule,
   ],
   controllers: [AppController, UsersController],
   providers: [AppService],
