@@ -1,5 +1,11 @@
 import { User } from 'src/modules/users/entity/user.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Profile {
@@ -15,15 +21,16 @@ export class Profile {
   @Column({ type: 'int' })
   age: number;
 
-  @Column()
+  @Column({ nullable: true })
   avatar?: string;
 
-  @Column({ type: 'int' })
-  phonenumber: number;
+  @Column()
+  phonenumber: string;
 
   @Column()
   address: string;
 
   @OneToOne(() => User, (user) => user.profile)
+  @JoinColumn()
   user: User;
 }
