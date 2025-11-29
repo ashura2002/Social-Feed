@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -26,11 +28,13 @@ export class UsersController {
 
   @Get()
   @Role(Roles.Admin)
+  @HttpCode(HttpStatus.OK)
   async findAllUsers(): Promise<User[]> {
     return await this.userService.findAll();
   }
 
   @Get('current')
+  @HttpCode(HttpStatus.OK)
   async getCurrentUser(@Req() req): Promise<User> {
     const { userId } = req.user;
     return await this.userService.getCurrentUser(userId);
@@ -38,6 +42,7 @@ export class UsersController {
 
   @Get(':userId/details')
   @Role(Roles.Admin)
+  @HttpCode(HttpStatus.OK)
   async findUserById(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<User> {
@@ -46,6 +51,7 @@ export class UsersController {
 
   @Patch(':userId')
   @Role(Roles.Admin)
+  @HttpCode(HttpStatus.OK)
   async updateUser(
     @Param('userId', ParseIntPipe) userId: number,
     @Body() updateDTO: UpdateUserDTO,
@@ -55,6 +61,7 @@ export class UsersController {
 
   @Delete(':userId')
   @Role(Roles.Admin)
+  @HttpCode(HttpStatus.OK)
   async deleteUser(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<{ message: string }> {
