@@ -2,14 +2,12 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { CreateUserDTO } from '../users/dto/create-user.dto';
 import { LoginDTO } from './dto/login.dto';
-import { JwtResponsePayload } from './types/JwtResponsePayload.types';
 import { AuthGuard } from '@nestjs/passport';
 import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/common/Enums/roles.enums';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { User } from '../users/entity/user.entity';
 
 @Controller('authentication')
 @ApiBearerAuth('access-token')
@@ -31,13 +29,10 @@ export class AuthenticationController {
 
   @UseGuards(JWTAuthGuard, RoleAuthGuard)
   @Post('logout')
-  async logout(@Req() req): Promise<{ message: string; user: User }> {
+  async logout(@Req() req): Promise<{ message: string }> {
     const { userId } = req.user;
-    const user = await this.authenticationService.logout(userId);
-    return {
-      message: 'Logout Successfully',
-      user: user,
-    };
+    await this.authenticationService.logout(userId);
+    return { message: 'Logout Successfully' };
   }
 
   @Get('google')
