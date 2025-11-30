@@ -12,12 +12,12 @@ import {
 } from 'typeorm';
 
 @Entity()
-export class Post {
+export class Posts {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'text', nullable: true })
-  content: string;  
+  content: string;
 
   @Column('simple-array', { nullable: true })
   mediaUrls?: string[]; // images or videos
