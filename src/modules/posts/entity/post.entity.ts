@@ -17,7 +17,7 @@ export class Post {
   id: number;
 
   @Column({ type: 'text', nullable: true })
-  content: string;
+  content: string;  
 
   @Column('simple-array', { nullable: true })
   mediaUrls?: string[]; // images or videos
@@ -26,7 +26,10 @@ export class Post {
   comments: Comment[];
 
   @Column({ default: 0 })
-  likesCount: number;
+  likes: number;
+
+  @Column({ default: 0 })
+  dislikes: number;
 
   @Column({
     type: 'enum',
