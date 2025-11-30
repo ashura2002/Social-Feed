@@ -91,7 +91,4 @@ export class ProfileService {
     return profile;
   }
 }
-// to do ->
-// posts module
-// comment
-// notifications with websocket
+
