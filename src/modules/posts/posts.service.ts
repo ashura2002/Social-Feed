@@ -75,3 +75,4 @@ export class PostsService {
 //      -> get all post on user
 //      -> update post
 //      -> view comment on single post
+//      -> add crud endpoints on comments
