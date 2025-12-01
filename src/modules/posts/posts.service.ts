@@ -14,6 +14,7 @@ import { ProfileService } from '../profile/profile.service';
 import { ResponsePost } from './dto/response.dto';
 import { UpdatePostDTO } from './dto/update-post.dto';
 import { CommentsService } from '../comments/comments.service';
+import { GetAllPostResponse } from './dto/get-all-post-response.dto';
 
 @Injectable()
 export class PostsService {
@@ -71,23 +72,30 @@ export class PostsService {
     return response;
   }
 
-  // TODO -> fix response added comment length for get all post
-
-  async getAll(userId: number): Promise<any> {
+  async getAll(userId: number): Promise<GetAllPostResponse[]> {
     const post = await this.postRepository
       .createQueryBuilder('post')
+      .leftJoin('post.comments', 'comments')
+      .select(['post', 'comments'])
       .where('post.user =:userId', { userId })
       .getMany();
 
-    const mappedPost = post.map(async (p) => {
-      const comments = await this.commentService.getComment(p.id);
-      const responseShape = {
-        ...post,
-        comments: comments.length,
+    const mapPost: GetAllPostResponse[] = post.map((p) => {
+      return {
+        id: p.id,
+        content: p.content,
+        mediaUrls: p?.mediaUrls || null,
+        comments: p.comments.length,
+        dislikes: p.dislikes,
+        likes: p.likes,
+        visibility: p.visibility,
+        isEdited: p.isEdited,
+        createdAt: p.createdAt,
+        updatedAt: p.updatedAt,
       };
     });
 
-    return post;
+    return mapPost;
   }
 
   async update(

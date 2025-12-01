@@ -20,6 +20,7 @@ import { CreatePostDTO } from './dto/create-post.dto';
 import { ResponsePost } from './dto/response.dto';
 import { Posts } from './entity/post.entity';
 import { UpdatePostDTO } from './dto/update-post.dto';
+import { GetAllPostResponse } from './dto/get-all-post-response.dto';
 
 @Controller('posts')
 @ApiBearerAuth('access-token')
@@ -50,7 +51,7 @@ export class PostsController {
 
   @Get('own')
   @HttpCode(HttpStatus.OK)
-  async getAllOwnPost(@Req() req): Promise<any> {
+  async getAllOwnPost(@Req() req): Promise<GetAllPostResponse[]> {
     const { userId } = req.user;
     return await this.postsService.getAll(userId);
   }
