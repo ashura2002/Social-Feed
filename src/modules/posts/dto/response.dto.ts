@@ -14,6 +14,9 @@ export class ResponsePost {
   likes: number;
 
   @ApiProperty()
+  comments: string[];
+
+  @ApiProperty()
   dislikes: number;
 
   @ApiProperty()

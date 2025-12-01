@@ -1,13 +1,19 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CommentsController } from './comments.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from './entity/comment.entity';
 import { PostsModule } from '../posts/posts.module';
 import { JwtModule } from '@nestjs/jwt';
+import { UsersModule } from '../users/users.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment]), PostsModule, JwtModule],
+  imports: [
+    TypeOrmModule.forFeature([Comment]),
+    JwtModule,
+    UsersModule,
+    forwardRef(() => PostsModule),
+  ],
   controllers: [CommentsController],
   providers: [CommentsService],
   exports: [CommentsService],
