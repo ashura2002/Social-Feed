@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -11,6 +13,7 @@ import { UsersService } from '../users/users.service';
 import { ProfileService } from '../profile/profile.service';
 import { ResponsePost } from './dto/response.dto';
 import { UpdatePostDTO } from './dto/update-post.dto';
+import { CommentsService } from '../comments/comments.service';
 
 @Injectable()
 export class PostsService {
@@ -18,6 +21,8 @@ export class PostsService {
     @InjectRepository(Posts) private readonly postRepository: Repository<Posts>,
     private readonly userService: UsersService,
     private readonly profileService: ProfileService,
+    @Inject(forwardRef(() => CommentsService))
+    private readonly commentService: CommentsService,
   ) {}
 
   async create(userId: number, createDTO: CreatePostDTO): Promise<Posts> {
@@ -54,21 +59,34 @@ export class PostsService {
     const profile = await this.profileService.checkExistingProfile(
       post.user?.id,
     );
+    const postWithComments = await this.commentService.getComment(post.id);
 
     const response: ResponsePost = {
       ...post,
       mediaUrls: post?.mediaUrls || null,
+      comments: postWithComments,
       user: `${profile?.firstname || 'No Profile'} ${profile?.lastname || 'Added Yet'}`,
     };
 
     return response;
   }
 
-  async getAll(userId: number): Promise<Posts[]> {
+  // TODO -> fix response added comment length for get all post
+
+  async getAll(userId: number): Promise<any> {
     const post = await this.postRepository
       .createQueryBuilder('post')
       .where('post.user =:userId', { userId })
       .getMany();
+
+    const mappedPost = post.map(async (p) => {
+      const comments = await this.commentService.getComment(p.id);
+      const responseShape = {
+        ...post,
+        comments: comments.length,
+      };
+    });
+
     return post;
   }
 

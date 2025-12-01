@@ -50,7 +50,7 @@ export class PostsController {
 
   @Get('own')
   @HttpCode(HttpStatus.OK)
-  async getAllOwnPost(@Req() req): Promise<Posts[]> {
+  async getAllOwnPost(@Req() req): Promise<any> {
     const { userId } = req.user;
     return await this.postsService.getAll(userId);
   }
@@ -69,9 +69,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   async getPostById(
     @Param('postId', ParseIntPipe) postId: number,
-    @Req() req,
   ): Promise<ResponsePost> {
-    const { userId } = req.user;
     return await this.postsService.getById(postId);
   }
 }
