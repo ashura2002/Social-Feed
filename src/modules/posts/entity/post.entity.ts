@@ -1,5 +1,6 @@
 import { VisibilityOptions } from 'src/common/Enums/visibility.enums';
 import { Comment } from 'src/modules/comments/entity/comment.entity';
+import { Reaction } from 'src/modules/reactions/entity/reaction.entity';
 import { User } from 'src/modules/users/entity/user.entity';
 import {
   Column,
@@ -25,12 +26,6 @@ export class Posts {
   @OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[];
 
-  @Column({ default: 0 })
-  likes: number;
-
-  @Column({ default: 0 })
-  dislikes: number;
-
   @Column({
     type: 'enum',
     enum: VisibilityOptions,
@@ -43,6 +38,9 @@ export class Posts {
 
   @ManyToOne(() => User, (user) => user.posts, { onDelete: 'CASCADE' })
   user: User;
+
+  @OneToMany(() => Reaction, (react) => react.post)
+  reactions: Reaction[];
 
   @CreateDateColumn()
   createdAt: Date;

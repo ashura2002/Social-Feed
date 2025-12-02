@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ReactionType } from 'src/common/Enums/reactions.enums';
+import { Reaction } from 'src/modules/reactions/entity/reaction.entity';
 
 export class ResponsePost {
   @ApiProperty()
@@ -11,13 +13,10 @@ export class ResponsePost {
   mediaUrls: string[] | null;
 
   @ApiProperty()
-  likes: number;
-
-  @ApiProperty()
   comments: string[];
 
   @ApiProperty()
-  dislikes: number;
+  reactions: Reaction[];
 
   @ApiProperty()
   visibility: string;

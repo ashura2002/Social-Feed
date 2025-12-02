@@ -14,10 +14,7 @@ export class GetAllPostResponse {
   comments: number;
 
   @ApiProperty()
-  likes: number;
-
-  @ApiProperty()
-  dislikes: number;
+  reactions: number;
 
   @ApiProperty()
   visibility: string;

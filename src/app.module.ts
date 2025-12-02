@@ -12,6 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ProfileModule } from './modules/profile/profile.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { ReactionsModule } from './modules/reactions/reactions.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CommentsModule } from './modules/comments/comments.module';
     ProfileModule,
     NotificationsModule,
     CommentsModule,
+    ReactionsModule,
   ],
   controllers: [AppController, UsersController],
   providers: [AppService],

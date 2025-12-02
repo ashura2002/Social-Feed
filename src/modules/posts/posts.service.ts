@@ -52,7 +52,8 @@ export class PostsService {
       .createQueryBuilder('post')
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile')
-      .select(['post', 'user', 'profile'])
+      .leftJoin('post.reactions', 'reactions')
+      .select(['post', 'user', 'profile', 'reactions'])
       .where('post.id =:postId', { postId })
       .getOne();
 
@@ -64,11 +65,11 @@ export class PostsService {
 
     const response: ResponsePost = {
       ...post,
+      reactions: post.reactions,
       mediaUrls: post?.mediaUrls || null,
       comments: postWithComments,
       user: `${profile?.firstname || 'No Profile'} ${profile?.lastname || 'Added Yet'}`,
     };
-
     return response;
   }
 
@@ -76,7 +77,8 @@ export class PostsService {
     const post = await this.postRepository
       .createQueryBuilder('post')
       .leftJoin('post.comments', 'comments')
-      .select(['post', 'comments'])
+      .leftJoin('post.reactions', 'reactions')
+      .select(['post', 'comments', 'reactions'])
       .where('post.user =:userId', { userId })
       .getMany();
 
@@ -86,9 +88,8 @@ export class PostsService {
         content: p.content,
         mediaUrls: p?.mediaUrls || null,
         comments: p.comments.length,
-        dislikes: p.dislikes,
-        likes: p.likes,
         visibility: p.visibility,
+        reactions: p.reactions.length,
         isEdited: p.isEdited,
         createdAt: p.createdAt,
         updatedAt: p.updatedAt,
