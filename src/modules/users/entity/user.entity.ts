@@ -14,6 +14,7 @@ import { Exclude } from 'class-transformer';
 import { UserStatus } from 'src/common/Enums/user-status.enum';
 import { Profile } from 'src/modules/profile/entity/profile.entity';
 import { Posts } from 'src/modules/posts/entity/post.entity';
+import { Reaction } from 'src/modules/reactions/entity/reaction.entity';
 
 @Entity()
 export class User {
@@ -52,4 +53,7 @@ export class User {
 
   @OneToMany(() => Posts, (post) => post.user)
   posts: Posts[];
+
+  @OneToMany(() => Reaction, (react) => react.user)
+  reactions: Reaction[];
 }

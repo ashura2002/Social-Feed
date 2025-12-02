@@ -7,6 +7,7 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ProfileModule } from '../profile/profile.module';
 import { CommentsModule } from '../comments/comments.module';
+import { ReactionsModule } from '../reactions/reactions.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CommentsModule } from '../comments/comments.module';
     JwtModule,
     ProfileModule,
     forwardRef(() => CommentsModule),
+    forwardRef(() => ReactionsModule),
   ],
   controllers: [PostsController],
   providers: [PostsService],

@@ -15,6 +15,7 @@ import { ResponsePost } from './dto/response.dto';
 import { UpdatePostDTO } from './dto/update-post.dto';
 import { CommentsService } from '../comments/comments.service';
 import { GetAllPostResponse } from './dto/get-all-post-response.dto';
+import { ReactionsService } from '../reactions/reactions.service';
 
 @Injectable()
 export class PostsService {
@@ -24,6 +25,8 @@ export class PostsService {
     private readonly profileService: ProfileService,
     @Inject(forwardRef(() => CommentsService))
     private readonly commentService: CommentsService,
+    @Inject(forwardRef(() => ReactionsService))
+    private readonly reactionService: ReactionsService,
   ) {}
 
   async create(userId: number, createDTO: CreatePostDTO): Promise<Posts> {
@@ -62,10 +65,11 @@ export class PostsService {
       post.user?.id,
     );
     const postWithComments = await this.commentService.getComment(post.id);
+    const postWithReactions = await this.reactionService.getReactions(post.id);
 
     const response: ResponsePost = {
       ...post,
-      reactions: post.reactions,
+      reactions: postWithReactions,
       mediaUrls: post?.mediaUrls || null,
       comments: postWithComments,
       user: `${profile?.firstname || 'No Profile'} ${profile?.lastname || 'Added Yet'}`,

@@ -1,5 +1,6 @@
 import { ReactionType } from 'src/common/Enums/reactions.enums';
 import { Posts } from 'src/modules/posts/entity/post.entity';
+import { User } from 'src/modules/users/entity/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -12,4 +13,7 @@ export class Reaction {
 
   @ManyToOne(() => Posts, (post) => post.reactions)
   post: Posts;
+
+  @ManyToOne(() => User, (user) => user.reactions)
+  user: User;
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ReactionsService } from './reactions.service';
 import { ReactionsController } from './reactions.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -12,9 +12,10 @@ import { Reaction } from './entity/reaction.entity';
     TypeOrmModule.forFeature([Reaction]),
     JwtModule,
     UsersModule,
-    PostsModule,
+    forwardRef(() => PostsModule),
   ],
   controllers: [ReactionsController],
   providers: [ReactionsService],
+  exports: [ReactionsService],
 })
 export class ReactionsModule {}
