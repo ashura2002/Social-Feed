@@ -14,6 +14,7 @@ import { CreateReactionDTO } from './dto/create-reaction.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
+import { Reaction } from './entity/reaction.entity';
 
 @Controller('reactions')
 @ApiBearerAuth('access-token')
@@ -26,7 +27,7 @@ export class ReactionsController {
   async cretePost(
     @Body() createDTO: CreateReactionDTO,
     @Req() req,
-  ): Promise<any> {
+  ): Promise<Reaction> {
     const { userId } = req.user;
     return await this.reactionsService.createReaction(createDTO, userId);
   }
