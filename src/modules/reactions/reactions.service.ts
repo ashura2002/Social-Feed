@@ -24,9 +24,9 @@ export class ReactionsService {
   async createReaction(
     createDTO: CreateReactionDTO,
     userId: number,
-  ): Promise<any> {
+  ): Promise<Reaction> {
     const { postId } = createDTO;
-    await this.checkExisting(userId);
+    await this.checkExisting(userId, postId);
     const post = await this.postService.getById(postId);
     const users = await this.userService.findById(userId);
     const reaction = this.reactRepository.create({
@@ -37,7 +37,7 @@ export class ReactionsService {
     return await this.reactRepository.save(reaction);
   }
 
-  async getReactions(postId: number): Promise<any> {
+  async getReactions(postId: number): Promise<Reaction[]> {
     const reactions = await this.reactRepository
       .createQueryBuilder('react')
       .leftJoin('react.user', 'user')
@@ -48,11 +48,25 @@ export class ReactionsService {
     return reactions;
   }
 
-  async checkExisting(userId: number): Promise<any> {
-    const existingReact = await this.reactRepository.findOne({
-      where: { user: { id: userId } },
-    });
+  async checkExisting(
+    userId: number,
+    postId: number,
+  ): Promise<Reaction | null> {
+    const existingReact = await this.reactRepository
+      .createQueryBuilder('react')
+      .where('react.user =:userId', { userId })
+      .andWhere('react.post =:postId', { postId })
+      .getOne();
+
     if (existingReact)
-      throw new BadRequestException('You Already React on this Post');
+      throw new BadRequestException(
+        `You can't react multiple times on a single post`,
+      );
+    return existingReact;
   }
 }
+
+// TO DO ->
+// push progress
+// update, delete comment
+// update , delete reaction
