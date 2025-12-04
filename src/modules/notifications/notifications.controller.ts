@@ -1,10 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -35,5 +39,31 @@ export class NotificationsController {
   async getOwnNotification(@Req() req): Promise<Notification[]> {
     const { userId } = req.user;
     return await this.notificationsService.getOwnNotification(userId);
+  }
+
+  @Delete(':notificationId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteNotification(
+    @Param('notificationId', ParseIntPipe) notificationId: number,
+    @Req() req,
+  ): Promise<void> {
+    const { userId } = req.user;
+    return await this.notificationsService.deleteNotification(
+      notificationId,
+      userId,
+    );
+  }
+
+  @Put(':notificationId')
+  @HttpCode(HttpStatus.OK)
+  async markAsRead(
+    @Param('notificationId', ParseIntPipe) notificationId: number,
+    @Req() req,
+  ): Promise<Notification> {
+    const { userId } = req.user;
+    return await this.notificationsService.updateNotification(
+      notificationId,
+      userId,
+    );
   }
 }
