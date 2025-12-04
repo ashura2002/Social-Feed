@@ -6,6 +6,7 @@ import { UsersModule } from '../users/users.module';
 import { PostsModule } from '../posts/posts.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Reaction } from './entity/reaction.entity';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { Reaction } from './entity/reaction.entity';
     JwtModule,
     UsersModule,
     forwardRef(() => PostsModule),
+    NotificationsModule,
   ],
   controllers: [ReactionsController],
   providers: [ReactionsService],
