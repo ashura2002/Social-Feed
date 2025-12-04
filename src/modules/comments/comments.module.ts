@@ -6,6 +6,7 @@ import { Comment } from './entity/comment.entity';
 import { PostsModule } from '../posts/posts.module';
 import { JwtModule } from '@nestjs/jwt';
 import { UsersModule } from '../users/users.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersModule } from '../users/users.module';
     JwtModule,
     UsersModule,
     forwardRef(() => PostsModule),
+    NotificationsModule
   ],
   controllers: [CommentsController],
   providers: [CommentsService],

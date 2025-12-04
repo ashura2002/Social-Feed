@@ -17,7 +17,6 @@ import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { CreateCommentDTO } from './dto/comments.dto';
 import { Comment } from './entity/comment.entity';
-import { Request } from 'express';
 import { UpdateCommentDTO } from './dto/update-comment.dto';
 
 @Controller('comments')

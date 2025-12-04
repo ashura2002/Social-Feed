@@ -73,6 +73,7 @@ export class PostsService {
       mediaUrls: post?.mediaUrls || null,
       comments: postWithComments,
       user: `${profile?.firstname || 'No Profile'} ${profile?.lastname || 'Added Yet'}`,
+      userId: post.user.id,
     };
     return response;
   }
@@ -119,6 +120,7 @@ export class PostsService {
   async findSinglePostService(postId: number): Promise<Posts | null> {
     const post = await this.postRepository.findOne({
       where: { id: postId },
+      relations: ['user'],
     });
     return post;
   }

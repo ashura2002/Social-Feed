@@ -26,4 +26,7 @@ export class ResponsePost {
 
   @ApiProperty()
   user: string;
+
+  @ApiProperty()
+  userId?: number;
 }

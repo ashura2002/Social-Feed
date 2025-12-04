@@ -12,6 +12,7 @@ import { CreateCommentDTO } from './dto/comments.dto';
 import { PostsService } from '../posts/posts.service';
 import { UsersService } from '../users/users.service';
 import { UpdateCommentDTO } from './dto/update-comment.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class CommentsService {
@@ -21,6 +22,7 @@ export class CommentsService {
     @Inject(forwardRef(() => PostsService))
     private readonly postService: PostsService,
     private readonly userService: UsersService,
+    private readonly notificationService: NotificationsService,
   ) {}
 
   async create(userId: number, createDTO: CreateCommentDTO): Promise<Comment> {
@@ -35,6 +37,14 @@ export class CommentsService {
       user: user,
       post: posts,
     });
+
+    // check if the current user is the owner of the post
+    // to avoid creating notification if owner comment own postF
+    if (user.id !== posts.user.id) {
+      await this.notificationService.create(posts.user?.id, {
+        message: `${user.email} is commented on your post`,
+      });
+    }
 
     return await this.commentRepository.save(comment);
   }
