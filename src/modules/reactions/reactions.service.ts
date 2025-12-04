@@ -102,7 +102,3 @@ export class ReactionsService {
     return reaction;
   }
 }
-
-// To do
-// push progress -m "Feat: added delete and update reactions controller -> service"
-// implement websocket for realtime update on notifications
