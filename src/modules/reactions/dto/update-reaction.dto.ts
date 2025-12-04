@@ -1,13 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 import { ReactionType } from 'src/common/Enums/reactions.enums';
 
-export class CreateReactionDTO {
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsInt()
-  postId: number;
-
+export class UpdateReactionDTO {
   @ApiProperty()
   @IsNotEmpty()
   @IsEnum(ReactionType)
