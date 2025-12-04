@@ -12,6 +12,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Reaction } from './entity/reaction.entity';
 import { Repository } from 'typeorm';
 import { UpdateReactionDTO } from './dto/update-reaction.dto';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class ReactionsService {
@@ -21,6 +22,7 @@ export class ReactionsService {
     private readonly userService: UsersService,
     @Inject(forwardRef(() => PostsService))
     private readonly postService: PostsService,
+    private readonly notificationService: NotificationsService,
   ) {}
 
   async createReaction(
@@ -29,13 +31,21 @@ export class ReactionsService {
   ): Promise<Reaction> {
     const { postId } = createDTO;
     await this.checkExisting(userId, postId);
-    const post = await this.postService.getById(postId);
+    const post = await this.postService.findSinglePostService(postId);
+    if (!post) throw new NotFoundException('Post not found');
     const users = await this.userService.findById(userId);
     const reaction = this.reactRepository.create({
       reaction: createDTO.reaction,
-      post: { id: post.id },
+      post: post,
       user: users,
     });
+
+    if (post.user.id !== userId) {
+      await this.notificationService.create(post.user.id, {
+        message: `${users.email} reacted ${createDTO.reaction} to your post`,
+      });
+    }
+
     return await this.reactRepository.save(reaction);
   }
 

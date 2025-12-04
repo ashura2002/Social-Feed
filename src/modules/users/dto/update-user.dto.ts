@@ -3,17 +3,21 @@ import { IsEnum, IsNotEmpty, MinLength } from 'class-validator';
 import { Roles } from 'src/common/Enums/roles.enums';
 
 export class UpdateUserDTO {
-  @ApiProperty()
+  @ApiProperty({
+    example: 'example',
+  })
   @IsNotEmpty()
   @MinLength(3)
   username: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: 'password123',
+  })
   @IsNotEmpty()
   @MinLength(3)
   password: string;
 
-  @ApiProperty()
+  @ApiProperty({ enum: Roles })
   @IsNotEmpty()
   @IsEnum(Roles)
   role: Roles;

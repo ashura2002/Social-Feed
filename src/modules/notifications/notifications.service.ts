@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entity/notification.entity';
 import { Repository } from 'typeorm';
@@ -31,6 +35,44 @@ export class NotificationsService {
     });
     return notification;
   }
+
+  async updateNotification(
+    notificationId: number,
+    userId: number,
+  ): Promise<Notification> {
+    const notification = await this.findOne(notificationId);
+
+    if (!notification) throw new NotFoundException('Notification not found');
+
+    if (notification?.user?.id !== userId)
+      throw new BadRequestException(
+        'You can only mark as read your own notification',
+      );
+    notification.isRead = true;
+    return await this.notificationRepository.save(notification);
+  }
+
+  async deleteNotification(
+    notificationId: number,
+    userId: number,
+  ): Promise<void> {
+    const notification = await this.findOne(notificationId);
+
+    if (!notification)
+      throw new NotFoundException('Notification not found, Already deleted');
+    if (notification.user.id !== userId)
+      throw new BadRequestException(
+        'You can only delete your own notifications',
+      );
+    await this.notificationRepository.remove(notification);
+  }
+
+  async findOne(notificationId: number): Promise<Notification | null> {
+    const notification = await this.notificationRepository.findOne({
+      where: { id: notificationId },
+      relations: ['user'],
+    });
+
+    return notification;
+  }
 }
-// TO DO ->
-// add notification to reactions modules

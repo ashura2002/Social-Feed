@@ -3,12 +3,12 @@ import { IsEnum, IsInt, IsNotEmpty } from 'class-validator';
 import { ReactionType } from 'src/common/Enums/reactions.enums';
 
 export class CreateReactionDTO {
-  @ApiProperty()
+  @ApiProperty({ description: 'Post Id' })
   @IsNotEmpty()
   @IsInt()
   postId: number;
 
-  @ApiProperty()
+  @ApiProperty({ enum: ReactionType })
   @IsNotEmpty()
   @IsEnum(ReactionType)
   reaction: ReactionType;
