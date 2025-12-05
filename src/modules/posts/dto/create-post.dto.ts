@@ -11,7 +11,7 @@ export class CreatePostDTO {
   @ApiProperty()
   @IsOptional()
   @IsString({ each: true })
-  mediaUrls: string[];
+  mediaUrls?: string[];
 
   @ApiProperty()
   @IsNotEmpty()
