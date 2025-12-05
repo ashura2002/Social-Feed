@@ -10,7 +10,9 @@ import {
   Post,
   Put,
   Req,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -21,6 +23,8 @@ import { ResponsePost } from './dto/response.dto';
 import { Posts } from './entity/post.entity';
 import { UpdatePostDTO } from './dto/update-post.dto';
 import { GetAllPostResponse } from './dto/get-all-post-response.dto';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'src/config/multer.config';
 
 @Controller('posts')
 @ApiBearerAuth('access-token')
@@ -30,12 +34,20 @@ export class PostsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
+  // for multiple file uploads fieldname, max number of files, multerconfig/path
+  @UseInterceptors(FilesInterceptor('mediaUrls', 5, multerConfig))
   async createPost(
     @Req() req,
     @Body() createDTO: CreatePostDTO,
+    @UploadedFiles() files: Express.Multer.File[], // array for multiple file uploads
   ): Promise<Posts> {
     const { userId } = req.user;
-    return await this.postsService.create(userId, createDTO);
+    const fileUploaded = files.map((file) => file.path);
+    const post = await this.postsService.create(userId, {
+      ...createDTO,
+      mediaUrls: fileUploaded,
+    });
+    return post;
   }
 
   @Delete(':postId')
