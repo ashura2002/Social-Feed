@@ -22,7 +22,7 @@ export class AuthenticationService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async create(createUserDTO: CreateUserDTO): Promise<User> {
+  async create(createUserDTO: CreateUserDTO): Promise<void> {
     const { username, email } = createUserDTO;
     const existingEmail = await this.userService.findByEmail(email);
     const existingUsername = await this.userService.findByUsername(username);
@@ -32,9 +32,6 @@ export class AuthenticationService {
       email === existingEmail?.email
     )
       throw new ConflictException('Username or Email was already taken!');
-
-    const user = this.userRepository.create(createUserDTO);
-    return await this.userRepository.save(user);
   }
 
   async login(loginDTO: LoginDTO): Promise<string> {
@@ -87,3 +84,6 @@ export class AuthenticationService {
     return accessToken;
   }
 }
+// to do
+// on register using it will return a message and send a verification code on the email
+// verify endpoint is to verify the code if valid then it well created if not provide a valid email

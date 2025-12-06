@@ -14,11 +14,8 @@ import { LoginDTO } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
-import { Role } from 'src/common/decorators/roles.decorator';
-import { Roles } from 'src/common/Enums/roles.enums';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { register } from 'module';
 
 @Controller('authentication')
 @ApiBearerAuth('access-token')
@@ -29,12 +26,15 @@ import { register } from 'module';
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
-  @UseGuards(JWTAuthGuard, RoleAuthGuard)
-  @Role(Roles.Admin)
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  async register(@Body() createDTO: CreateUserDTO): Promise<any> {
-    return this.authenticationService.create(createDTO);
+  async register(
+    @Body() createDTO: CreateUserDTO,
+  ): Promise<{ message: string }> {
+    await this.authenticationService.create(createDTO);
+    return {
+      message: 'code will be sent on your email account',
+    };
   }
 
   @Post('login')
