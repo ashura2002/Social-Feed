@@ -44,20 +44,20 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @BeforeInsert()
-  hashPassword() {
-    this.password = bcrypt.hashSync(this.password, 10);
-  }
-
-  @OneToOne(() => Profile, (profile) => profile.user, { nullable: true })
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    nullable: true,
+    onDelete: 'CASCADE',
+  })
   profile: Profile;
 
-  @OneToMany(() => Posts, (post) => post.user)
+  @OneToMany(() => Posts, (post) => post.user, { onDelete: 'CASCADE' })
   posts: Posts[];
 
-  @OneToMany(() => Reaction, (react) => react.user)
+  @OneToMany(() => Reaction, (react) => react.user, { onDelete: 'CASCADE' })
   reactions: Reaction[];
 
-  @OneToMany(() => Notification, (notification) => notification.user)
+  @OneToMany(() => Notification, (notification) => notification.user, {
+    onDelete: 'CASCADE',
+  })
   notifications: Notification[];
 }

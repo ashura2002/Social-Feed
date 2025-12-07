@@ -16,6 +16,8 @@ import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
+import { VerifyCode } from './dto/verify-code.dto';
+import { CreateVerificationDTO } from './dto/create-verified-user.dto';
 
 @Controller('authentication')
 @ApiBearerAuth('access-token')
@@ -29,12 +31,22 @@ export class AuthenticationController {
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
   async register(
-    @Body() createDTO: CreateUserDTO,
+    @Body() verifiedDTO: CreateVerificationDTO,
   ): Promise<{ message: string }> {
-    await this.authenticationService.create(createDTO);
+    await this.authenticationService.create(verifiedDTO);
     return {
-      message: 'code will be sent on your email account',
+      message: 'OTP sent to your email. Verify to complete registration.',
     };
+  }
+
+  @Post('verify')
+  @HttpCode(HttpStatus.OK)
+  async verifyCode(
+    @Body() verifyCodeDTO: VerifyCode,
+  ): Promise<{ message: string }> {
+    const { code } = verifyCodeDTO;
+    await this.authenticationService.verifyCode(code);
+    return { message: 'Account Created Successfully' };
   }
 
   @Post('login')
@@ -68,3 +80,5 @@ export class AuthenticationController {
     return { message: 'Login Successfully', accessToken: jwt };
   }
 }
+
+// REVIEW CODE UPDATED CODE
