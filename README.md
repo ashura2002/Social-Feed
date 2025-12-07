@@ -1,98 +1,173 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+Social-Feed
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Practice project implementing OAuth 2.0 authentication and email flows via Nodemailer. This repository describes how to use the Social-Feed API using the Postman collection, including authentication, environment setup, and endpoint reference.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Collection: Social-Feed
+Goal: Demonstrate OAuth 2.0 login/verification, CRUD for users, posts, comments, reactions, profiles, and notifications, plus transactional emails (via Nodemailer).
+Base URL: 
+http://localhost:8000
+Swagger UI: 
+http://localhost:8000/api
+Contents
 
-## Description
+Quick Start
+Swagger UI
+OAuth 2.0 Authentication Workflow
+Email (Nodemailer) Behavior
+Environments and Variables
+Folders and Endpoints
+AUTH
+USER
+PROFILE
+POST
+COMMENTS
+Reactions
+Notifications
+Common Workflows
+Testing and Automation in Postman
+Troubleshooting
+License
+Quick Start
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Start your API server on 
+http://localhost:8000
+.
+Explore the API at Swagger UI: 
+http://localhost:8000/api
+.
+Open the Postman collection “Social-Feed”.
+(Optional) Create an environment with:
+baseUrl = 
+http://localhost:8000
+authToken =
+Run the auth flow:
+AUTH > REGISTER (optional)
+AUTH > LOGIN
+AUTH > Verify CODE (if your flow requires a one-time code)
+Use the Bearer token from LOGIN to call protected endpoints.
+Tip: Store the token in an environment variable (authToken) and set collection/folder Authorization to inherit it.
 
-## Project setup
+OAuth 2.0 Authentication Workflow Auth endpoints:
 
-```bash
-$ npm install
-```
+POST /authentication/register — Create a new user.
+POST /authentication/login — Authenticate and receive access token.
+POST /authentication/verify — Verify OTP or login code if required by your OAuth flow.
+POST /authentication/logout — Invalidate session/token.
+Typical sequence:
 
-## Compile and run the project
+Register (if needed).
+Login to obtain an access token (JWT or opaque).
+If your flow uses a second step, verify the code with /authentication/verify.
+Send Authorization: Bearer with protected requests.
+Logout when done.
+Email (Nodemailer) Behavior
 
-```bash
-# development
-$ npm run start
+The project uses Nodemailer for transactional emails (e.g., verification codes, notifications).
+Ensure your SMTP credentials and sender configuration are set in your server environment (e.g., .env).
+If you expect an email (verification, notification) but don’t receive it:
+Check SMTP creds and host/port/secure settings.
+Verify from/to addresses and spam folder.
+Confirm the server route that triggers the email completed successfully (2xx).
+Environments and Variables Recommended Postman environment variables:
 
-# watch mode
-$ npm run start:dev
+baseUrl = 
+http://localhost:8000
+authToken = Bearer token from LOGIN
+userId, postId, commentId, notificationId, reactionId = frequently used identifiers
+Usage tips:
 
-# production mode
-$ npm run start:prod
-```
+Set Authorization as “Bearer Token” with {{authToken}} or inherit from parent.
+Prefer variables in paths and queries (e.g., {{baseUrl}}/users/{{userId}}/details).
+Folders and Endpoints Replace placeholders with IDs returned by your server.
 
-## Run tests
+AUTH
 
-```bash
-# unit tests
-$ npm run test
+POST /authentication/register — Create a new user.
+POST /authentication/login — Authenticate and receive access token.
+POST /authentication/verify — Verify OTP or login code (if used).
+POST /authentication/logout — Invalidate session/token.
+USER
 
-# e2e tests
-$ npm run test:e2e
+GET /users — Get all users.
+PATCH /users/{id} — Update user.
+GET /users/{id}/details — Get user by ID with details.
+GET /users/current — Get the authenticated user.
+DELETE /users/{id} — Delete user.
+GET /users/name?firstname=Test — Search users by first name.
+PROFILE
 
-# test coverage
-$ npm run test:cov
-```
+GET /profile — Retrieve own profile.
+POST /profile — Create own profile.
+PATCH /profile — Update own profile.
+DELETE /profile — Delete own profile.
+POST
 
-## Deployment
+POST /posts — Create a post.
+DELETE /posts/{id} — Delete a post.
+GET /posts/own/{id} — Get own post by ID.
+GET /posts/own — Get all own posts.
+PUT /posts/own/{id} — Update own post.
+COMMENTS
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+POST /comments — Add a comment.
+GET /comments/{id} — Get a comment.
+PATCH /comments/{id} — Update a comment.
+DELETE /comments/{id} — Delete a comment.
+Reactions
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+POST /reactions — Create a reaction.
+PATCH /reactions/{id} — Update a reaction.
+DELETE /reactions/{id} — Delete a reaction.
+Notifications
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+POST /notifications — Create a notification.
+GET /notifications — Get own notifications.
+DELETE /notifications/{id} — Delete a notification.
+PUT /notifications/{id} — Update a notification.
+Common Workflows
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Onboarding and Profile Setup
+AUTH > REGISTER
+AUTH > LOGIN (store token)
+PROFILE > create profile
+USER > get current user
+Posting and Commenting
+POST > create post
+COMMENTS > add comment with post reference
+Reactions > create reaction for a post/comment
+Managing Notifications and Emails
+Notifications > get own notifications
+Notifications > update or delete notification
+Check mailbox for any email notifications (if your server sends them)
+Testing and Automation in Postman
 
-## Resources
+Use collection/folder-level auth; requests inherit by default.
+Add Tests to validate status codes and payloads.
+Use the Collection Runner for workflows (e.g., AUTH → POST → COMMENTS).
+Monitors can run smoke tests on a schedule.
+Example test: pm.test("Status is 200", () => { pm.response.to.have.status(200); });
 
-Check out a few resources that may come in handy when working with NestJS:
+Troubleshooting
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Swagger UI not loading
 
-## Support
+Verify OpenAPI docs at /api (
+http://localhost:8000/api
+).
+Check server logs and route configuration.
+401 Unauthorized
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Ensure Bearer token is set and not expired.
+Re-run LOGIN; complete /authentication/verify if required.
+404 Not Found
 
-## Stay in touch
+Confirm IDs and that you’re using “own” routes when applicable.
+Confirm baseUrl.
+400/422 Validation
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Ensure required fields are provided and Content-Type is correct.
+Nodemailer emails not received
 
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Confirm SMTP config and credentials.
+Check spam/junk and from/to addresses.
+Verify the server route that triggers the email executed successfully.
