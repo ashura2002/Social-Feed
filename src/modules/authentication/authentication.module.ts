@@ -8,11 +8,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtConfigOptions } from 'src/config/jwt.config';
 import { GoogleStrategy } from './strategy/google.strategy';
+import { EmailModule } from '../Email/email.module';
+import { UserVerification } from './entity/user-verification.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, UserVerification]),
     UsersModule,
+    EmailModule,
     ConfigModule.forRoot(),
     JwtModule.registerAsync({
       imports: [ConfigModule],
