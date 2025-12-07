@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -38,6 +39,12 @@ export class UsersController {
   async getCurrentUser(@Req() req): Promise<User> {
     const { userId } = req.user;
     return await this.userService.getCurrentUser(userId);
+  }
+
+  @Get('name')
+  @HttpCode(HttpStatus.OK)
+  async searchUserByName(@Query('firstname') name: string): Promise<User[]> {
+    return await this.userService.searchUserByName(name);
   }
 
   @Get(':userId/details')

@@ -20,8 +20,20 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    const user = await this.userRepository.find();
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.profile', 'profile')
+      .getMany();
     return user;
+  }
+
+  async searchUserByName(name: string): Promise<User[]> {
+    const users = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.profile', 'profile')
+      .where('profile.firstname =:name', { name })
+      .getMany();
+    return users;
   }
 
   async update(userId: number, updateDTO: UpdateUserDTO): Promise<User> {

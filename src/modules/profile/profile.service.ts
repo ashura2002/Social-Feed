@@ -28,7 +28,7 @@ export class ProfileService {
     const existed = await this.checkExistingProfile(userId);
     if (existed)
       throw new ConflictException(
-        'Profile is already exiting if you want to modify try to update',
+        'Profile is already existing if you want to modify try to update',
       );
 
     const profile = this.profileRepository.create({

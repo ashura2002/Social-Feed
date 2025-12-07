@@ -80,5 +80,3 @@ export class AuthenticationController {
     return { message: 'Login Successfully', accessToken: jwt };
   }
 }
-
-// REVIEW CODE UPDATED CODE

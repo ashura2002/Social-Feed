@@ -52,7 +52,7 @@ export class AuthenticationService {
     await this.emailService.sendVerificationCode(email, code);
   }
 
-  async verifyCode(code: string):Promise<void> {
+  async verifyCode(code: string): Promise<void> {
     const verification = await this.verificationRepository.findOne({
       where: { code },
     });
