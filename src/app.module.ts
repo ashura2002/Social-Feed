@@ -16,6 +16,7 @@ import { ReactionsModule } from './modules/reactions/reactions.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CustomThrottlerGuard } from './common/Guards/customThrottler.guard';
+import { FriendsModule } from './modules/friends/friends.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CustomThrottlerGuard } from './common/Guards/customThrottler.guard';
     NotificationsModule,
     CommentsModule,
     ReactionsModule,
+    FriendsModule,
   ],
   controllers: [AppController, UsersController],
   providers: [

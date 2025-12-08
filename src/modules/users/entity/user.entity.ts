@@ -16,6 +16,7 @@ import { Profile } from 'src/modules/profile/entity/profile.entity';
 import { Posts } from 'src/modules/posts/entity/post.entity';
 import { Reaction } from 'src/modules/reactions/entity/reaction.entity';
 import { Notification } from 'src/modules/notifications/entity/notification.entity';
+import { Friend } from 'src/modules/friends/entity/friend.entity';
 
 @Entity()
 export class User {
@@ -60,4 +61,10 @@ export class User {
     onDelete: 'CASCADE',
   })
   notifications: Notification[];
+
+  @OneToMany(() => Friend, (friend) => friend.requester)
+  sentFriendRequests: Friend[];
+
+  @OneToMany(() => Friend, (friend) => friend.receiver)
+  receivedFriendRequests: Friend[];
 }
