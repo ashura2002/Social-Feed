@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -46,7 +45,9 @@ export class FriendsService {
 
   async addFriend(userId: number, addFriendDTO: AddFriendDTO): Promise<Friend> {
     const requester = await this.userService.findById(userId);
-    const receiver = await this.userService.findById(addFriendDTO.userId);
+    const receiver = await this.userService.findOneRoleUser(
+      addFriendDTO.userId,
+    );
 
     const existingFriend = await this.friendRepository.findOne({
       where: { requester: { id: userId }, receiver: { id: receiver.id } },
@@ -102,9 +103,37 @@ export class FriendsService {
     });
     await this.friendRepository.save(friendRequest);
   }
+
+  async deleteRequest(friendRequestId: number, userId: number): Promise<void> {
+    const request = await this.friendRepository
+      .createQueryBuilder('friend')
+      .leftJoinAndSelect('friend.requester', 'requester')
+      .leftJoinAndSelect('friend.receiver', 'receiver')
+      .where('friend.id =:friendRequestId', { friendRequestId })
+      .andWhere('requester.id =:userId', { userId })
+      .andWhere('friend.status =:status', { status: FriendStatus.PENDING })
+      .getOne();
+    // console.log({
+    //   requestID: request?.requester.id,
+    //   userId: userId,
+    // });
+    if (!request)
+      throw new NotFoundException(
+        'Request not found possibly that it was deleted, accepted or rejected',
+      );
+    await this.friendRepository.remove(request);
+  }
+
+  async getAllMyFriendRequest(userId: number): Promise<Friend[]> {
+    const request = await this.friendRepository
+      .createQueryBuilder('friend')
+      .leftJoinAndSelect('friend.requester', 'requester')
+      .leftJoinAndSelect('friend.receiver', 'receiver')
+      .where('requester.id =:userId', { userId })
+      .andWhere('friend.status =:status', { status: FriendStatus.PENDING })
+      .getMany();
+    return request;
+  }
 }
 
-// to do
-// delete request
-// maybe get all rejected request
-// normalize the response for get all friends
+// try to implement cron job delete all the rejected request on 24 hours

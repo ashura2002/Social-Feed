@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -36,6 +37,13 @@ export class FriendsController {
   async getAllPendingFriendRequest(@Req() req): Promise<Friend[]> {
     const { userId } = req.user;
     return await this.friendsService.getAllPendingFriendRequest(userId);
+  }
+
+  @Get('requester')
+  @HttpCode(HttpStatus.OK)
+  async getAllMyFriendRequest(@Req() req): Promise<Friend[]> {
+    const { userId } = req.user;
+    return await this.friendsService.getAllMyFriendRequest(userId);
   }
 
   @Post()
@@ -77,5 +85,16 @@ export class FriendsController {
     return {
       message: `Friend request is successfully ${requestOptionsDTO.status}.`,
     };
+  }
+
+  @Delete(':friendRequestID')
+  @HttpCode(HttpStatus.OK)
+  async deleteRequest(
+    @Param('friendRequestID', ParseIntPipe) friendRequestID: number,
+    @Req() req,
+  ): Promise<{ message: string }> {
+    const { userId } = req.user;
+    await this.friendsService.deleteRequest(friendRequestID, userId);
+    return { message: 'Deleted Successfully' };
   }
 }

@@ -4,6 +4,7 @@ import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { Roles } from 'src/common/Enums/roles.enums';
 
 @Injectable()
 export class UsersService {
@@ -69,5 +70,13 @@ export class UsersService {
   async removeUser(userId: number): Promise<void> {
     const user = await this.findById(userId);
     await this.userRepository.remove(user);
+  }
+
+  async findOneRoleUser(userId: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId, role: Roles.User },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 }
