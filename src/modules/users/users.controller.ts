@@ -44,7 +44,9 @@ export class UsersController {
   @Get('name')
   @HttpCode(HttpStatus.OK)
   async searchUserByName(@Query('firstname') name: string): Promise<User[]> {
-    return await this.userService.searchUserByName(name);
+    return await this.userService.searchUserByName(
+      `${name.slice(0, 1).toUpperCase()}${name.slice(1).toLowerCase()}`,
+    );
   }
 
   @Get(':userId/details')
