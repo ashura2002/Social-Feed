@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Req,
   UseGuards,
@@ -69,7 +70,7 @@ export class FriendsController {
     );
   }
 
-  @Post('decision/:requestId')
+  @Patch('decision/:requestId')
   @HttpCode(HttpStatus.CREATED)
   async friendRequestDecision(
     @Body() requestOptionsDTO: RequestOptionsDTO,

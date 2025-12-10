@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,9 +12,11 @@ import { AddFriendDTO } from './dto/add-friend.dto';
 import { NotificationsService } from '../notifications/notifications.service';
 import { FriendStatus } from 'src/common/Enums/friend-status-enum';
 import { RequestOptionsDTO } from './dto/friend-request-options.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class FriendsService {
+  private readonly logger = new Logger(FriendsService.name);
   constructor(
     @InjectRepository(Friend)
     private readonly friendRepository: Repository<Friend>,
@@ -85,7 +88,6 @@ export class FriendsService {
       .andWhere('receiver.id =:userId', { userId })
       .andWhere('friend.status =:status', { status: FriendStatus.PENDING })
       .getOne();
-
     if (!friendRequest) throw new NotFoundException();
     return friendRequest;
   }
@@ -134,6 +136,14 @@ export class FriendsService {
       .getMany();
     return request;
   }
-}
 
-// try to implement cron job delete all the rejected request on 24 hours
+  @Cron('0 */2 * * * *')
+  async handleCron() {
+    const request = await this.friendRepository.delete({
+      status: FriendStatus.REJECTED,
+    });
+    this.logger.log(
+      `Deleted ${JSON.stringify(request.affected)} rejected friend requests.`,
+    );
+  }
+}
