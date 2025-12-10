@@ -17,6 +17,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { CustomThrottlerGuard } from './common/Guards/customThrottler.guard';
 import { FriendsModule } from './modules/friends/friends.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { FriendsModule } from './modules/friends/friends.module';
         },
       ],
     }),
+    ScheduleModule.forRoot(),
     JwtModule,
     UsersModule,
     PostsModule,
