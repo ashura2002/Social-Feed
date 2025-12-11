@@ -77,4 +77,9 @@ export class UsersController {
     await this.userService.removeUser(userId);
     return { message: 'Deleted Successfully' };
   }
+
+  @Patch('change-password')
+  async changePassword(@Req() req): Promise<any> {
+    const { userId } = req.user;
+  }
 }
