@@ -79,4 +79,6 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
+
+  async changePassword(userId: number): Promise<any> {}
 }
