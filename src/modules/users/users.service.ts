@@ -1,19 +1,22 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
-import { Repository } from 'typeorm';
+import { LessThan, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Roles } from 'src/common/Enums/roles.enums';
 import { EmailService } from '../Email/email.service';
 import { PasswordReset } from './entity/change-password.entity';
 import { VerifyPasswordChangeDTO } from './dto/update-password.dto';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(PasswordReset)
@@ -123,5 +126,14 @@ export class UsersService {
 
     // delete the code on table
     await this.passwordResetRepository.remove(userRecord);
+  }
+
+  @Cron('0 0 0 * * *')
+  async deleteUnUsedCode() {
+    const result = await this.passwordResetRepository.delete({
+      expiresAt: LessThan(new Date()), // delete entries whose expiration time is earlier than the current time
+    });
+
+    this.logger.log(`Deleted ${result.affected} expired verification codes`);
   }
 }
