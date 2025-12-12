@@ -4,9 +4,15 @@ import { UsersController } from './users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { JwtModule } from '@nestjs/jwt';
+import { EmailModule } from '../Email/email.module';
+import { PasswordReset } from './entity/change-password.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), JwtModule],
+  imports: [
+    TypeOrmModule.forFeature([User, PasswordReset]),
+    JwtModule,
+    EmailModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService],

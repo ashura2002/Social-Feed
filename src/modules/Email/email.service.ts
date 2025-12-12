@@ -40,7 +40,7 @@ export class EmailService {
     </h2>
 
     <p style="font-size: 15px; color: #353b48;">
-      Hello, here is your verification code to complete your registration.
+      Hello, here is your verification code.
       This code will <strong>expire in 5 minutes</strong>.
     </p>
 
