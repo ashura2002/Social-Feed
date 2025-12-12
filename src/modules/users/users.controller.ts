@@ -72,7 +72,7 @@ export class UsersController {
   @Get('request-change-password')
   async requestPasswordChange(@Req() req): Promise<{ message: string }> {
     const { userId } = req.user;
-    this.userService.requestPasswordChange(userId);
+    await this.userService.requestPasswordChange(userId);
     return {
       message: 'Verification code sent to your email successfully.',
     };
@@ -83,7 +83,7 @@ export class UsersController {
     @Req() req,
     @Body() dto: VerifyPasswordChangeDTO,
   ): Promise<{ message: string }> {
-    this.userService.verifyPasswordChange(req.user.userId, dto);
+    await this.userService.verifyPasswordChange(req.user.userId, dto);
     return {
       message: 'Password successfully changed.',
     };
