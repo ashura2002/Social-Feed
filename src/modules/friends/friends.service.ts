@@ -139,11 +139,17 @@ export class FriendsService {
 
   @Cron('0 */2 * * * *')
   async handleCron() {
-    const request = await this.friendRepository.delete({
-      status: FriendStatus.REJECTED,
-    });
-    this.logger.log(
-      `Deleted ${JSON.stringify(request.affected)} rejected friend requests.`,
-    );
+    try {
+      const request = await this.friendRepository.delete({
+        status: FriendStatus.REJECTED,
+      });
+      this.logger.log(
+        `Deleted ${JSON.stringify(request.affected)} rejected friend requests.`,
+      );
+    } catch (error) {
+      this.logger.warn(
+        'Cron skipped: friend table not ready or DB not initialized yet',
+      );
+    }
   }
 }
