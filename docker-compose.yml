@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: social-feed
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${SERVER_PORT}:8000'
+    environment:
+       'DB_HOST': 'db'
+       'DB_TYPE': '${DB_TYPE}'
+       'DB_USERNAME': '${DB_USERNAME}'
+       'DB_PASSWORD': '${DB_PASSWORD}'
+       'DB_NAME': '${DB_NAME}'
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
+
+  db:
+    container_name: postgres-db
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8.11
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - '5050:80'
+    depends_on:
+      - db
+  
+volumes:
+  postgres_data:

@@ -10,6 +10,6 @@ export const typeOrmConfigFactory = (
   username: config.get<string>('DB_USERNAME'),
   password: config.get<string>('DB_PASSWORD'),
   database: config.get<string>('DB_NAME'),
-  synchronize: false,
+  synchronize: true,
   autoLoadEntities: true,
 });
