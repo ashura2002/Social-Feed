@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '${SERVER_PORT}:8000'
+      - "${SERVER_PORT}:8000"
     environment:
        'DB_HOST': 'db'
        'DB_TYPE': '${DB_TYPE}'
@@ -21,6 +21,21 @@ services:
       - /app/node_modules
     command: npm run start:dev
 
+  seed:
+    container_name: seed-admin
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: node dist/database/seed.js
+    environment:
+      DB_HOST: 'db'
+      DB_PORT: 5432
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    depends_on:
+      - db
+
   db:
     container_name: postgres-db
     image: postgres:15
@@ -30,7 +45,7 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -42,9 +57,9 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
     ports:
-      - '5050:80'
+      - "5050:80"
     depends_on:
       - db
-  
+
 volumes:
   postgres_data:
