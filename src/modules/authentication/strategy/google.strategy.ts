@@ -27,7 +27,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const email = profile.emails?.[0]?.value;
 
     if (!email) {
-      throw new Error('Google account has no email');
+      throw new Error('Google account does not have an email');
     }
 
     return {
