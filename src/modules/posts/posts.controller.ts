@@ -25,6 +25,7 @@ import { UpdatePostDTO } from './dto/update-post.dto';
 import { GetAllPostResponse } from './dto/get-all-post-response.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/config/multer.config';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
 
 @Controller('posts')
 @ApiBearerAuth('access-token')
@@ -37,7 +38,7 @@ export class PostsController {
   // for multiple file uploads fieldname, max number of files, multerconfig/path
   @UseInterceptors(FilesInterceptor('mediaUrls', 5, multerConfig))
   async createPost(
-    @Req() req,
+    @Req() req: AuthRequest,
     @Body() createDTO: CreatePostDTO,
     @UploadedFiles() files: Express.Multer.File[], // array for multiple file uploads
   ): Promise<Posts> {
@@ -54,7 +55,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   async deletePost(
     @Param('postId', ParseIntPipe) postId: number,
-    @Req() req,
+    @Req() req: AuthRequest,
   ): Promise<{ message: string }> {
     const { userId } = req.user;
     await this.postsService.delete(postId, userId);
@@ -63,7 +64,7 @@ export class PostsController {
 
   @Get('own')
   @HttpCode(HttpStatus.OK)
-  async getAllOwnPost(@Req() req): Promise<GetAllPostResponse[]> {
+  async getAllOwnPost(@Req() req: AuthRequest): Promise<GetAllPostResponse[]> {
     const { userId } = req.user;
     return await this.postsService.getAll(userId);
   }
@@ -71,7 +72,7 @@ export class PostsController {
   @Put('own/:postId')
   async updatePost(
     @Param('postId', ParseIntPipe) postId: number,
-    @Req() req,
+    @Req() req: AuthRequest,
     @Body() updateDTO: UpdatePostDTO,
   ): Promise<Posts> {
     const { userId } = req.user;

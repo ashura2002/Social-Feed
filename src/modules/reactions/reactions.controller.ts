@@ -18,6 +18,7 @@ import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { Reaction } from './entity/reaction.entity';
 import { UpdateReactionDTO } from './dto/update-reaction.dto';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
 
 @Controller('reactions')
 @ApiBearerAuth('access-token')
@@ -29,7 +30,7 @@ export class ReactionsController {
   @HttpCode(HttpStatus.CREATED)
   async cretePost(
     @Body() createDTO: CreateReactionDTO,
-    @Req() req,
+    @Req() req: AuthRequest,
   ): Promise<Reaction> {
     const { userId } = req.user;
     return await this.reactionsService.createReaction(createDTO, userId);
@@ -38,7 +39,7 @@ export class ReactionsController {
   @Patch(':reactionId')
   async updateReaction(
     @Param('reactionId', ParseIntPipe) reactionId: number,
-    @Req() req,
+    @Req() req: AuthRequest,
     @Body() updateDTO: UpdateReactionDTO,
   ): Promise<Reaction> {
     const { userId } = req.user;
@@ -52,7 +53,7 @@ export class ReactionsController {
   @Delete(':reactionId')
   async deleteReaction(
     @Param('reactionId', ParseIntPipe) reactionId: number,
-    @Req() req,
+    @Req() req: AuthRequest,
   ): Promise<{ message: string }> {
     const { userId } = req.user;
     await this.reactionsService.deleteReaction(reactionId, userId);

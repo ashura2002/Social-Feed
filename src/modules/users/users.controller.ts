@@ -8,7 +8,6 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
   Query,
   Req,
   UseGuards,
@@ -21,6 +20,7 @@ import { Role } from 'src/common/decorators/roles.decorator';
 import { Roles } from 'src/common/Enums/roles.enums';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { VerifyPasswordChangeDTO } from './dto/update-password.dto';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
 
 @Controller('users')
 @ApiBearerAuth('access-token')
@@ -37,7 +37,7 @@ export class UsersController {
 
   @Get('current')
   @HttpCode(HttpStatus.OK)
-  async getCurrentUser(@Req() req): Promise<User> {
+  async getCurrentUser(@Req() req: AuthRequest): Promise<User> {
     const { userId } = req.user;
     return await this.userService.getCurrentUser(userId);
   }
@@ -70,7 +70,9 @@ export class UsersController {
   }
 
   @Get('request-change-password')
-  async requestPasswordChange(@Req() req): Promise<{ message: string }> {
+  async requestPasswordChange(
+    @Req() req: AuthRequest,
+  ): Promise<{ message: string }> {
     const { userId } = req.user;
     await this.userService.requestPasswordChange(userId);
     return {
@@ -80,10 +82,11 @@ export class UsersController {
 
   @Patch('verify-change-password')
   async verifyChangePassword(
-    @Req() req,
+    @Req() req: AuthRequest,
     @Body() dto: VerifyPasswordChangeDTO,
   ): Promise<{ message: string }> {
-    await this.userService.verifyPasswordChange(req.user.userId, dto);
+    const { userId } = req.user;
+    await this.userService.verifyPasswordChange(userId, dto);
     return {
       message: 'Password successfully changed.',
     };

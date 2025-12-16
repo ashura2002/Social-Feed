@@ -1,6 +1,5 @@
 import { Roles } from 'src/common/Enums/roles.enums';
 import {
-  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import { UserStatus } from 'src/common/Enums/user-status.enum';
 import { Profile } from 'src/modules/profile/entity/profile.entity';
