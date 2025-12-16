@@ -19,6 +19,7 @@ import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { AddFriendDTO } from './dto/add-friend.dto';
 import { Friend } from './entity/friend.entity';
 import { RequestOptionsDTO } from './dto/friend-request-options.dto';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
 
 @Controller('friends')
 @ApiBearerAuth('access-token')
@@ -28,21 +29,21 @@ export class FriendsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getAllMyFriends(@Req() req): Promise<Friend[]> {
+  async getAllMyFriends(@Req() req: AuthRequest): Promise<Friend[]> {
     const { userId } = req.user;
     return await this.friendsService.getAllMyFriend(userId);
   }
 
   @Get('friend-request')
   @HttpCode(HttpStatus.OK)
-  async getAllPendingFriendRequest(@Req() req): Promise<Friend[]> {
+  async getAllPendingFriendRequest(@Req() req: AuthRequest): Promise<Friend[]> {
     const { userId } = req.user;
     return await this.friendsService.getAllPendingFriendRequest(userId);
   }
 
   @Get('requester')
   @HttpCode(HttpStatus.OK)
-  async getAllMyFriendRequest(@Req() req): Promise<Friend[]> {
+  async getAllMyFriendRequest(@Req() req: AuthRequest): Promise<Friend[]> {
     const { userId } = req.user;
     return await this.friendsService.getAllMyFriendRequest(userId);
   }
@@ -50,7 +51,7 @@ export class FriendsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async addFriend(
-    @Req() req,
+    @Req() req: AuthRequest,
     @Body() addFriendDTO: AddFriendDTO,
   ): Promise<Friend> {
     const { userId } = req.user;
@@ -61,7 +62,7 @@ export class FriendsController {
   @HttpCode(HttpStatus.OK)
   async findOneFriendRequest(
     @Param('friendRequestID', ParseIntPipe) friendRequestID: number,
-    @Req() req,
+    @Req() req: AuthRequest,
   ): Promise<Friend> {
     const { userId } = req.user;
     return await this.friendsService.findOneFriendRequest(

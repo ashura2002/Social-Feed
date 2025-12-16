@@ -18,6 +18,7 @@ import { RoleAuthGuard } from 'src/common/Guards/roles-auth.guard';
 import { CreateCommentDTO } from './dto/comments.dto';
 import { Comment } from './entity/comment.entity';
 import { UpdateCommentDTO } from './dto/update-comment.dto';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
 
 @Controller('comments')
 @ApiBearerAuth('access-token')
@@ -28,7 +29,7 @@ export class CommentsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createComment(
-    @Req() req,
+    @Req() req:AuthRequest,
     @Body() createDTO: CreateCommentDTO,
   ): Promise<Comment> {
     const { userId } = req.user;
@@ -39,7 +40,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.OK)
   async updateComment(
     @Param('commentId', ParseIntPipe) commentId: number,
-    @Req() req,
+    @Req() req:AuthRequest,
     @Body() updateDTO: UpdateCommentDTO,
   ): Promise<Comment> {
     const { userId } = req.user;
@@ -54,7 +55,7 @@ export class CommentsController {
   @HttpCode(HttpStatus.OK)
   async deleteComment(
     @Param('commentId', ParseIntPipe) commentId: number,
-    @Req() req,
+    @Req() req:AuthRequest,
   ): Promise<{ message: string }> {
     const { userId } = req.user;
     await this.commentsService.deleteComment(commentId, userId);

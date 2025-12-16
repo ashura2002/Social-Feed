@@ -17,6 +17,7 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
 import { CreateNotificationDTO } from './dto/create-notification.dto';
 import { Notification } from './entity/notification.entity';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
 
 @Controller('notifications')
 @ApiBearerAuth('access-token')
@@ -27,7 +28,7 @@ export class NotificationsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async createNotification(
-    @Req() req,
+    @Req() req:AuthRequest,
     @Body() createDTO: CreateNotificationDTO,
   ): Promise<Notification> {
     const { userId } = req.user;
@@ -36,7 +37,7 @@ export class NotificationsController {
 
   @Get('')
   @HttpCode(HttpStatus.OK)
-  async getOwnNotification(@Req() req): Promise<Notification[]> {
+  async getOwnNotification(@Req() req:AuthRequest): Promise<Notification[]> {
     const { userId } = req.user;
     return await this.notificationsService.getOwnNotification(userId);
   }
@@ -45,7 +46,7 @@ export class NotificationsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteNotification(
     @Param('notificationId', ParseIntPipe) notificationId: number,
-    @Req() req,
+    @Req() req:AuthRequest,
   ): Promise<void> {
     const { userId } = req.user;
     return await this.notificationsService.deleteNotification(
@@ -58,7 +59,7 @@ export class NotificationsController {
   @HttpCode(HttpStatus.OK)
   async markAsRead(
     @Param('notificationId', ParseIntPipe) notificationId: number,
-    @Req() req,
+    @Req() req:AuthRequest,
   ): Promise<Notification> {
     const { userId } = req.user;
     return await this.notificationsService.updateNotification(

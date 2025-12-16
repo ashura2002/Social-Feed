@@ -5,8 +5,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Param,
-  ParseIntPipe,
   Patch,
   Post,
   Req,
@@ -24,6 +22,7 @@ import { Profile } from './entity/profile.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { UpdateProfileDTO } from './dto/update-profile.dto';
 import { ProfileResponseDTO } from './dto/response.dto';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
 
 @Controller('profile')
 @UseGuards(JWTAuthGuard, RoleAuthGuard)
@@ -35,7 +34,7 @@ export class ProfileController {
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(FileInterceptor('avatar', multerConfig))
   async createProfile(
-    @Req() req,
+    @Req() req: AuthRequest,
     @Body() createProfileDTO: CreateProfileDTO,
     @UploadedFile() avatar?: Express.Multer.File,
   ): Promise<Profile> {
@@ -49,7 +48,7 @@ export class ProfileController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getOwnProfile(@Req() req): Promise<ProfileResponseDTO> {
+  async getOwnProfile(@Req() req: AuthRequest): Promise<ProfileResponseDTO> {
     const { userId } = req.user;
     return await this.profileService.getOwnProfile(userId);
   }
@@ -57,7 +56,7 @@ export class ProfileController {
   @Patch()
   @UseInterceptors(FileInterceptor('avatar', multerConfig))
   async updateProfile(
-    @Req() req,
+    @Req() req: AuthRequest,
     @Body() dto: UpdateProfileDTO,
     @UploadedFile() avatar?: Express.Multer.File,
   ): Promise<Profile> {
@@ -67,7 +66,7 @@ export class ProfileController {
 
   @Delete()
   @HttpCode(HttpStatus.OK)
-  async deleteProfile(@Req() req): Promise<{ message: string }> {
+  async deleteProfile(@Req() req: AuthRequest): Promise<{ message: string }> {
     const { userId } = req.user;
     await this.profileService.deleteProfile(userId);
     return { message: 'Profile deleted Successfully' };
