@@ -7,9 +7,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { Observable } from 'rxjs';
 import { UsersService } from 'src/modules/users/users.service';
 import { UserStatus } from '../Enums/user-status.enum';
+import { AuthRequest } from '../types/auth-request.type';
+import { JwtResponsePayload } from 'src/modules/authentication/types/JwtResponsePayload.types';
 
 @Injectable()
 export class JWTAuthGuard implements CanActivate {
@@ -19,15 +20,21 @@ export class JWTAuthGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthRequest>();
     const accessToken = this.attachToHeaders(request);
     if (!accessToken) throw new UnauthorizedException();
 
     try {
       // verify token
-      const payload = await this.jwtService.verifyAsync(accessToken, {
-        secret: process.env.JWT_SECRET,
-      });
+      const payload = await this.jwtService.verifyAsync<JwtResponsePayload>(
+        accessToken,
+        {
+          secret: process.env.JWT_SECRET,
+        },
+      );
+
+      if (!payload || typeof payload.userId !== 'number')
+        throw new UnauthorizedException();
 
       // get user from db
       const user = await this.userService.findById(payload.userId);
@@ -37,15 +44,17 @@ export class JWTAuthGuard implements CanActivate {
         throw new ForbiddenException('User is logout, Login again');
 
       request.user = payload;
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException();
     }
     return true;
   }
 
-  private attachToHeaders(request: Request): string | null {
-    const [bearer, accessToken] =
-      request.headers.authorization?.split(' ') ?? [];
-    return bearer === 'Bearer' ? accessToken : null;
+  private attachToHeaders<T extends Request>(request: T): string | null {
+    const authHeader = request.headers.authorization;
+    if (!authHeader) return null;
+
+    const [bearer, token] = authHeader.split(' ');
+    return bearer === 'Bearer' ? token : null;
   }
 }
