@@ -9,7 +9,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
-import { CreateUserDTO } from '../users/dto/create-user.dto';
 import { LoginDTO } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JWTAuthGuard } from 'src/common/Guards/jwt-auth.guard';
@@ -18,6 +17,8 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { VerifyCode } from './dto/verify-code.dto';
 import { CreateVerificationDTO } from './dto/create-verified-user.dto';
+import type { AuthRequest } from 'src/common/types/auth-request.type';
+import { JwtResponsePayload } from './types/JwtResponsePayload.types';
 
 @Controller('authentication')
 @ApiBearerAuth('access-token')
@@ -59,7 +60,7 @@ export class AuthenticationController {
   @UseGuards(JWTAuthGuard, RoleAuthGuard)
   @Post('logout')
   @HttpCode(HttpStatus.CREATED)
-  async logout(@Req() req): Promise<{ message: string }> {
+  async logout(@Req() req: AuthRequest): Promise<{ message: string }> {
     const { userId } = req.user;
     await this.authenticationService.logout(userId);
     return { message: 'Logout Successfully' };
@@ -75,8 +76,10 @@ export class AuthenticationController {
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   @HttpCode(HttpStatus.OK)
-  async googleAuthRedirect(@Req() req) {
-    const jwt = await this.authenticationService.googleLogin(req.user);
+  async googleAuthRedirect(@Req() req: AuthRequest) {
+    const jwt = await this.authenticationService.googleLogin(
+      req.user as JwtResponsePayload,
+    );
     return { message: 'Login Successfully', accessToken: jwt };
   }
 }
