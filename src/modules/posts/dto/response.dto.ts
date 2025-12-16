@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ReactionType } from 'src/common/Enums/reactions.enums';
 import { Reaction } from 'src/modules/reactions/entity/reaction.entity';
 
 export class ResponsePost {
