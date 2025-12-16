@@ -51,7 +51,7 @@ export class PostsService {
   }
 
   async getById(postId: number): Promise<ResponsePost> {
-    const post = await this.postRepository
+    const post: Posts | null = await this.postRepository
       .createQueryBuilder('post')
       .leftJoin('post.user', 'user')
       .leftJoin('user.profile', 'profile')
@@ -79,7 +79,7 @@ export class PostsService {
   }
 
   async getAll(userId: number): Promise<GetAllPostResponse[]> {
-    const post = await this.postRepository
+    const post: Posts[] = await this.postRepository
       .createQueryBuilder('post')
       .leftJoin('post.comments', 'comments')
       .leftJoin('post.reactions', 'reactions')
@@ -112,6 +112,9 @@ export class PostsService {
     const user = await this.userService.findById(userId);
     const post = await this.findSinglePostService(postId);
     if (!post) throw new NotFoundException('Post not found');
+
+    if (post.user.id !== user.id)
+      throw new BadRequestException('You can only update your own post');
 
     Object.assign(post, updateDTO);
     return await this.postRepository.save(post);

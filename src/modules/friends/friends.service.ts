@@ -149,6 +149,7 @@ export class FriendsService {
     } catch (error) {
       this.logger.warn(
         'Cron skipped: friend table not ready or DB not initialized yet',
+        error,
       );
     }
   }

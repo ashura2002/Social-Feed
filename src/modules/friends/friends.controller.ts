@@ -75,7 +75,7 @@ export class FriendsController {
   @HttpCode(HttpStatus.CREATED)
   async friendRequestDecision(
     @Body() requestOptionsDTO: RequestOptionsDTO,
-    @Req() req,
+    @Req() req: AuthRequest,
     @Param('requestId') requestId: number,
   ): Promise<{ message: string }> {
     const { userId } = req.user;
@@ -93,7 +93,7 @@ export class FriendsController {
   @HttpCode(HttpStatus.OK)
   async deleteRequest(
     @Param('friendRequestID', ParseIntPipe) friendRequestID: number,
-    @Req() req,
+    @Req() req:AuthRequest,
   ): Promise<{ message: string }> {
     const { userId } = req.user;
     await this.friendsService.deleteRequest(friendRequestID, userId);
