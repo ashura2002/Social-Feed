@@ -7,20 +7,31 @@ export class EmailService {
   private transporter: Transporter;
 
   constructor(private readonly configService: ConfigService) {
-    // Type assertion to Transporter ensures TypeScript knows the type
-    this.transporter = nodemailer.createTransport({
+    const transport = nodemailer.createTransport({
       host: this.configService.get<string>('MAIL_HOST')!,
       port: this.configService.get<number>('MAIL_PORT')!,
       auth: {
         user: this.configService.get<string>('MAIL_USER')!,
         pass: this.configService.get<string>('MAIL_PASS')!,
       },
-    }) as Transporter;
+    });
+
+    // Type-safe check before assignment
+    if (
+      !('sendMail' in transport) ||
+      typeof transport.sendMail !== 'function'
+    ) {
+      throw new InternalServerErrorException(
+        'Failed to create mail transporter',
+      );
+    }
+
+    this.transporter = transport;
   }
 
   async sendVerificationCode(to: string, code: string) {
     const message: SendMailOptions = {
-      from: this.configService.get<string>('MAIL_USER'),
+      from: this.configService.get<string>('MAIL_USER')!,
       to,
       subject: 'Social Feed',
       text: 'Your verification code will expire in 5 minutes.',
@@ -49,7 +60,6 @@ export class EmailService {
     try {
       await this.transporter.sendMail(message);
     } catch (err: unknown) {
-      // Narrow the type to Error for type safety
       const error =
         err instanceof Error ? err : new Error('Unknown email error');
       console.error('Email error:', error.message);

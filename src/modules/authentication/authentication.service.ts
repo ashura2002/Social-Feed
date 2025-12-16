@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entity/user.entity';
-import { CreateUserDTO } from '../users/dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoginDTO } from './dto/login.dto';
@@ -15,8 +14,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UserStatus } from 'src/common/Enums/user-status.enum';
 import { UserVerification } from './entity/user-verification.entity';
 import { EmailService } from '../Email/email.service';
-import { Roles } from 'src/common/Enums/roles.enums';
 import { CreateVerificationDTO } from './dto/create-verified-user.dto';
+import { GoogleUser } from 'src/common/types/google-interface';
 
 @Injectable()
 export class AuthenticationService {
@@ -104,7 +103,7 @@ export class AuthenticationService {
     await this.userRepository.save(user);
   }
 
-  async googleLogin(googleUser: any) {
+  async googleLogin(googleUser: GoogleUser) {
     const { email } = googleUser;
     // check if user is existing
     const user = await this.userService.findByEmail(email);

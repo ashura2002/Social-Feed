@@ -18,7 +18,7 @@ import { Throttle } from '@nestjs/throttler';
 import { VerifyCode } from './dto/verify-code.dto';
 import { CreateVerificationDTO } from './dto/create-verified-user.dto';
 import type { AuthRequest } from 'src/common/types/auth-request.type';
-import { JwtResponsePayload } from './types/JwtResponsePayload.types';
+import type { JwtResponsePayload } from './types/JwtResponsePayload.types';
 
 @Controller('authentication')
 @ApiBearerAuth('access-token')
