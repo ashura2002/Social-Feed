@@ -39,7 +39,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  void SwaggerModule.setup('api', app, documentFactory);
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   await app.listen(port);
   console.log(`Server is running on http://localhost:${port}`);
